@@ -14,8 +14,7 @@ This project is a simple **Reverse Complement Tool** built using Flask. It takes
 Reverse-Compliment/
 │
 ├── app.py                  # The main Flask application.
-├── templates/              # Folder for HTML templates.
-└── static/                 # (If applicable) Folder for static files like CSS/JS.
+
 ```
 
 ## Requirements
