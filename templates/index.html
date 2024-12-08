@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Genetic Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Advanced Genetic Tool</h1>
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Genetic Tool</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/about">About</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Tabs -->
+        <ul class="nav nav-tabs" id="toolTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="reverse-tab" data-bs-toggle="tab" data-bs-target="#reverse" type="button" role="tab">Reverse Complement</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="mrna-tab" data-bs-toggle="tab" data-bs-target="#mrna" type="button" role="tab">DNA to mRNA</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="gc-tab" data-bs-toggle="tab" data-bs-target="#gc" type="button" role="tab">GC Content</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="protein-tab" data-bs-toggle="tab" data-bs-target="#protein" type="button" role="tab">Protein Translation</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="mutation-tab" data-bs-toggle="tab" data-bs-target="#mutation" type="button" role="tab">Mutation Identification</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="transcription-tab" data-bs-toggle="tab" data-bs-target="#transcription" type="button" role="tab">Transcription Efficiency</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="reverse-trans-tab" data-bs-toggle="tab" data-bs-target="#reverse-trans" type="button" role="tab">Reverse Transcriptase</button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content mt-4">
+            <!-- Reverse Complement -->
+            <div class="tab-pane fade show active" id="reverse" role="tabpanel">
+                <form method="post">
+                    <input type="hidden" name="analysis" value="reverse_complement">
+                    <div class="form-group">
+                        <label for="sequence">Enter DNA Sequence</label>
+                        <textarea class="form-control" id="sequence" name="sequence" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Analyze</button>
+                </form>
+            </div>
+
+            <!-- DNA to mRNA -->
+            <div class="tab-pane fade" id="mrna" role="tabpanel">
+                <form method="post">
+                    <input type="hidden" name="analysis" value="dna_to_mrna">
+                    <div class="form-group">
+                        <label for="sequence">Enter DNA Sequence</label>
+                        <textarea class="form-control" id="sequence" name="sequence" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Analyze</button>
+                </form>
+            </div>
+
+            <!-- GC Content -->
+            <div class="tab-pane fade" id="gc" role="tabpanel">
+                <form method="post">
+                    <input type="hidden" name="analysis" value="gc_content">
+                    <div class="form-group">
+                        <label for="sequence">Enter DNA Sequence</label>
+                        <textarea class="form-control" id="sequence" name="sequence" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Analyze</button>
+                </form>
+            </div>
+
+            <!-- Protein Translation -->
+            <div class="tab-pane fade" id="protein" role="tabpanel">
+                <form method="post">
+                    <input type="hidden" name="analysis" value="protein_translation">
+                    <div class="form-group">
+                        <label for="sequence">Enter mRNA Sequence</label>
+                        <textarea class="form-control" id="sequence" name="sequence" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Analyze</button>
+                </form>
+            </div>
+
+            <!-- Mutation Identification -->
+            <div class="tab-pane fade" id="mutation" role="tabpanel">
+                <form method="post">
+                    <input type="hidden" name="analysis" value="mutation_identification">
+                    <div class="form-group">
+                        <label for="sequence">Enter DNA Sequence</label>
+                        <textarea class="form-control" id="sequence" name="sequence" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Identify Mutations</button>
+                </form>
+            </div>
+
+            <!-- Transcription Efficiency -->
+            <div class="tab-pane fade" id="transcription" role="tabpanel">
+                <form method="post">
+                    <input type="hidden" name="analysis" value="transcription_efficiency">
+                    <div class="form-group">
+                        <label for="sequence">Enter DNA Sequence</label>
+                        <textarea class="form-control" id="sequence" name="sequence" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Analyze Transcription</button>
+                </form>
+            </div>
+
+            <!-- Reverse Transcriptase -->
+            <div class="tab-pane fade" id="reverse-trans" role="tabpanel">
+                <form method="post">
+                    <input type="hidden" name="analysis" value="reverse_transcriptase">
+                    <div class="form-group">
+                        <label for="sequence">Enter RNA Sequence</label>
+                        <textarea class="form-control" id="sequence" name="sequence" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-3">Convert to DNA</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Result Section -->
+        {% if result %}
+            <div class="mt-5">
+                <h4>Result</h4>
+                <textarea class="form-control" rows="4" readonly>{{ result }}</textarea>
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

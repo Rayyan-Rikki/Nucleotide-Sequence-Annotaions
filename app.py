@@ -1,91 +1,100 @@
-from flask import Flask, request, render_template_string, send_file
-from flask_frozen import Freezer
-import os
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
-freezer = Freezer(app)
 
+# Utility functions
 def reverse_complement(sequence):
     complement = {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'}
-    return ''.join(complement[base] for base in reversed(sequence))
+    return ''.join(complement[base] for base in reversed(sequence.strip().upper()))
+
+def dna_to_mrna(sequence):
+    return sequence.strip().upper().replace('T', 'U')
+
+def calculate_gc_content(sequence):
+    gc_count = sequence.upper().count('G') + sequence.upper().count('C')
+    return (gc_count / len(sequence)) * 100 if len(sequence) > 0 else 0
+
+def mrna_to_protein(sequence):
+    codon_table = {
+        'AUG': 'M', 'UGG': 'W', 'UAA': '*', 'UAG': '*', 'UGA': '*',
+        'UUU': 'F', 'UUC': 'F', 'UUA': 'L', 'UUG': 'L',
+        'CUU': 'L', 'CUC': 'L', 'CUA': 'L', 'CUG': 'L',
+        'AUU': 'I', 'AUC': 'I', 'AUA': 'I', 'GUU': 'V',
+        'GUC': 'V', 'GUA': 'V', 'GUG': 'V', 'UCU': 'S',
+        'UCC': 'S', 'UCA': 'S', 'UCG': 'S', 'AGU': 'S',
+        'AGC': 'S', 'CCU': 'P', 'CCC': 'P', 'CCA': 'P', 'CCG': 'P',
+        'ACU': 'T', 'ACC': 'T', 'ACA': 'T', 'ACG': 'T',
+        'GCU': 'A', 'GCC': 'A', 'GCA': 'A', 'GCG': 'A',
+        'UAU': 'Y', 'UAC': 'Y', 'CAU': 'H', 'CAC': 'H',
+        'CAA': 'Q', 'CAG': 'Q', 'AAU': 'N', 'AAC': 'N',
+        'AAA': 'K', 'AAG': 'K', 'GAU': 'D', 'GAC': 'D',
+        'GAA': 'E', 'GAG': 'E', 'UGU': 'C', 'UGC': 'C',
+        'GGU': 'G', 'GGC': 'G', 'GGA': 'G', 'GGG': 'G'
+    }
+    sequence = sequence.strip().replace('T', 'U').upper()
+    protein = []
+    codon_map = []
+    for i in range(0, len(sequence) - 2, 3):
+        codon = sequence[i:i+3]
+        if codon in codon_table:
+            amino_acid = codon_table[codon]
+            codon_map.append((codon, amino_acid))
+            if amino_acid == '*':
+                break
+            protein.append(amino_acid)
+    return ''.join(protein), codon_map
+
+def mutation_identification(sequence):
+    ref_sequence = "ATGCATGCATGC"  # Example reference sequence
+    sequence = sequence.strip().upper()
+    mutations = []
+    for i, base in enumerate(sequence):
+        if i < len(ref_sequence) and base != ref_sequence[i]:
+            mutations.append((i + 1, ref_sequence[i], base))
+    return mutations
+
+def transcription_efficiency(sequence):
+    sequence = sequence.strip().upper()
+    # Mock transcription factor binding site
+    if "TATA" in sequence:
+        return "High transcription efficiency due to TATA box."
+    return "Low transcription efficiency."
+
+def reverse_transcriptase(sequence):
+    return sequence.strip().upper().replace('U', 'T')
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    result = ''
+    result = None
+    analysis_type = None
     if request.method == 'POST':
         sequence = request.form['sequence']
-        result = reverse_complement(sequence)
-    return render_template_string('''
-        <!doctype html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Reverse Complement</title>
-            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-        </head>
-        <body>
-            <div class="container mt-5">
-                <h1 class="text-center">Reverse Complement Tool</h1>
-                <form method="post" class="mt-4">
-                    <div class="form-group">
-                        <label for="sequence">Enter DNA Sequence</label>
-                        <textarea class="form-control" id="sequence" name="sequence" rows="10" maxlength="5000"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Reverse</button>
-                </form>
-                <div class="mt-4">
-                    <h2>Reverse Complement:</h2>
-                    <textarea class="form-control" rows="10" readonly>{{ result }}</textarea>
-                </div>
-                <form method="post" action="/download" class="mt-3">
-                    <input type="hidden" name="sequence" value="{{ request.form.sequence }}">
-                    <button type="submit" class="btn btn-secondary">Download Result</button>
-                </form>
-                <div class="mt-3">
-                    <a href="/about" class="btn btn-info">About</a>
-                </div>
-            </div>
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        </body>
-        </html>
-    ''', result=result)
-
-@app.route('/download', methods=['POST'])
-def download():
-    sequence = request.form['sequence']
-    result = reverse_complement(sequence)
-    filename = 'reverse_complement.txt'
-    with open(filename, 'w') as file:
-        file.write(result)
-    return send_file(filename, as_attachment=True)
+        analysis_type = request.form['analysis']
+        try:
+            if analysis_type == 'reverse_complement':
+                result = reverse_complement(sequence)
+            elif analysis_type == 'dna_to_mrna':
+                result = dna_to_mrna(sequence)
+            elif analysis_type == 'gc_content':
+                gc_content = calculate_gc_content(sequence)
+                result = f"GC Content: {gc_content:.2f}%"
+            elif analysis_type == 'protein_translation':
+                protein, codon_map = mrna_to_protein(sequence)
+                result = {"protein": protein, "codon_map": codon_map}
+            elif analysis_type == 'mutation_identification':
+                mutations = mutation_identification(sequence)
+                result = mutations
+            elif analysis_type == 'transcription_efficiency':
+                result = transcription_efficiency(sequence)
+            elif analysis_type == 'reverse_transcriptase':
+                result = reverse_transcriptase(sequence)
+        except Exception as e:
+            result = f"Error: {str(e)}"
+    return render_template('index.html', result=result, analysis_type=analysis_type)
 
 @app.route('/about')
 def about():
-    return render_template_string('''
-        <!doctype html>
-        <html lang="en">
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>About</title>
-            <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-        </head>
-        <body>
-            <div class="container mt-5">
-                <h1>About This Application</h1>
-                <p>This application takes a DNA sequence and returns its reverse complement.</p>
-                <a href="/" class="btn btn-primary">Go back to the main page</a>
-            </div>
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-        </body>
-        </html>
-    ''')
+    return render_template('about.html')
 
 if __name__ == '__main__':
-    freezer.freeze()
     app.run(debug=True)
